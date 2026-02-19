@@ -4,153 +4,379 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Weather Pro App</title>
-    <script src="script.js"></script>
+    <title>Weather </title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
       body {
-        background: linear-gradient(-45deg, #0f172a, #1e293b, #020617, #334155);
-        background-size: 400% 400%;
-        animation: gradient 12s ease infinite;
+        font-family: "Outfit", sans-serif;
+        transition: 0.3s;
       }
 
-      @keyframes gradient {
+      .light {
+        background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+        color: black;
+      }
+
+      .dark {
+        background: linear-gradient(135deg, #0f172a, #020617);
+        color: white;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .dark .card {
+        background: rgba(30, 41, 59, 0.9);
+      }
+
+      .btn {
+        background: #0ea5e9;
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background: #0284c7;
+      }
+
+      .spinner {
+        border: 4px solid #eee;
+        border-top: 4px solid #0ea5e9;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: auto;
+      }
+
+      @keyframes spin {
         0% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
+          transform: rotate(0deg);
         }
         100% {
-          background-position: 0% 50%;
-        }
-      }
-
-      .weather-icon {
-        font-size: 100px;
-        animation: float 3s ease-in-out infinite;
-      }
-
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-20px);
+          transform: rotate(360deg);
         }
       }
     </style>
   </head>
 
-  <body class="text-white min-h-screen flex flex-col">
-    <!-- HEADER -->
-    <header class="bg-black/40 backdrop-blur p-4 shadow-lg">
-      <div class="max-w-6xl mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-3">
-          <div class="text-3xl">🌦️</div>
+  <body class="light">
+    <!-- NAVBAR -->
 
-          <div>
-            <h1 class="text-2xl font-bold">Weather Pro</h1>
+    <nav class="flex justify-between p-4 shadow bg-white dark:bg-slate-900">
+      <h1 class="text-xl font-bold text-sky-500">🌤 Weather </h1>
 
-            <p class="text-sm text-gray-300">Real-time Global Weather</p>
-          </div>
-        </div>
+      <div class="flex gap-3">
+        <button onclick="toggleDark()" class="btn">🌙 Dark Mode</button>
+
+        <button onclick="saveHomeLocation()" class="btn">🏠 Save Home</button>
       </div>
-    </header>
+    </nav>
 
-    <!-- MAIN -->
-    <main class="flex-1 flex items-center justify-center">
-      <div class="w-full max-w-4xl p-6">
-        <!-- Buttons -->
-        <div class="flex gap-3 mb-4">
-          <button
-            onclick="getMyLocation()"
-            class="bg-green-500 hover:bg-green-600 px-5 py-3 rounded"
-          >
-            📍 Use My Location
+    <div class="max-w-3xl mx-auto p-4 space-y-4">
+      <!-- SEARCH -->
+
+      <div class="card">
+        <input
+          id="search"
+          placeholder="Search city or village..."
+          class="w-full p-3 border rounded"
+        />
+
+        <div id="suggestions" class="hidden"></div>
+
+        <div class="flex gap-2 mt-2">
+          <button onclick="searchCity()" class="btn flex-1">Search</button>
+
+          <button onclick="getLocation()" class="btn flex-1">
+            📍 Use Current Location
           </button>
         </div>
 
-        <!-- Search -->
-        <div class="flex gap-3 mb-6">
-          <input
-            id="cityInput"
-            type="text"
-            placeholder="Search any city..."
-            class="flex-1 p-4 rounded text-black"
-          />
-
-          <button
-            onclick="searchWeather()"
-            class="bg-blue-500 hover:bg-blue-600 px-6 py-4 rounded"
-          >
-            Search
-          </button>
-        </div>
-
-        <div id="error" class="text-red-400 text-center mb-4"></div>
-
-        <!-- Weather Card -->
-        <div
-          id="weatherCard"
-          class="hidden bg-white/10 backdrop-blur rounded-xl p-8 shadow-lg"
-        >
-          <div class="flex flex-col md:flex-row justify-between items-center">
-            <div>
-              <h2 id="city" class="text-3xl font-bold mb-2"></h2>
-
-              <div class="text-6xl font-bold"><span id="temp"></span>°C</div>
-
-              <div id="condition" class="text-xl mt-2"></div>
-            </div>
-
-            <div id="weatherIcon" class="weather-icon">☀️</div>
-          </div>
-
-          <!-- Details -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6 text-center">
-            <div>
-              <div class="text-3xl">💨</div>
-
-              <div id="wind"></div>
-
-              <p class="text-gray-300">Wind</p>
-            </div>
-
-            <div>
-              <div class="text-3xl">🧭</div>
-
-              <div id="direction"></div>
-
-              <p class="text-gray-300">Direction</p>
-            </div>
-
-            <div>
-              <div class="text-3xl">🌡️</div>
-
-              <div id="feels"></div>
-
-              <p class="text-gray-300">Feels Like</p>
-            </div>
-
-            <div>
-              <div class="text-3xl">⏱️</div>
-
-              <div id="time"></div>
-
-              <p class="text-gray-300">Local Time</p>
-            </div>
-          </div>
+        <div id="gpsLoader" class="hidden mt-3">
+          <div class="spinner"></div>
+          <p class="text-center">Detecting location...</p>
         </div>
       </div>
-    </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-black/40 backdrop-blur text-center p-4 text-gray-300">
-      © 2026 Weather Pro | Tailwind CSS Project
-    </footer>
+      <!-- CURRENT -->
+
+      <div id="currentCard" class="card hidden">
+        <h2 id="city"></h2>
+
+        <div class="text-5xl" id="icon"></div>
+
+        <div class="text-4xl font-bold"><span id="temp"></span>°C</div>
+
+        <p id="desc"></p>
+
+        <p>Humidity: <span id="humidity"></span>%</p>
+
+        <p>Wind: <span id="wind"></span></p>
+
+        <p>Pressure: <span id="pressure"></span></p>
+      </div>
+
+      <!-- ALERTS -->
+
+      <div id="alertsCard" class="card hidden"></div>
+
+      <!-- HOURLY -->
+
+      <div id="hourlyCard" class="card hidden">
+        <h3 class="font-bold">Hourly</h3>
+
+        <div id="hourly" class="flex gap-4 overflow-x-auto"></div>
+      </div>
+
+      <!-- DAILY -->
+
+      <div id="dailyCard" class="card hidden">
+        <h3 class="font-bold">5 Day Forecast</h3>
+
+        <div id="daily" class="grid grid-cols-5 gap-2"></div>
+      </div>
+    </div>
+
+    <script>
+      const API = "fa8cd5a48fb0f21e7664a79c919a73d2";
+
+      let lat, lon;
+      let forecast = [];
+
+      const icons = {
+        "01d": "☀️",
+        "01n": "🌙",
+        "02d": "⛅",
+        "03d": "☁️",
+        "09d": "🌧️",
+        "10d": "🌦️",
+        "11d": "⛈️",
+        "13d": "❄️",
+      };
+
+      ////////////////////////////
+      // DARK MODE
+      ////////////////////////////
+
+      function toggleDark() {
+        document.body.classList.toggle("dark");
+        document.body.classList.toggle("light");
+      }
+
+      ////////////////////////////
+      // GPS LOCATION (FIXED)
+      ////////////////////////////
+
+      function getLocation() {
+        if (!navigator.geolocation) {
+          alert("GPS not supported");
+          return;
+        }
+
+        document.getElementById("gpsLoader").classList.remove("hidden");
+
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            lat = pos.coords.latitude;
+            lon = pos.coords.longitude;
+
+            document.getElementById("gpsLoader").classList.add("hidden");
+
+            loadWeather();
+          },
+
+          (err) => {
+            alert("Location access denied");
+            document.getElementById("gpsLoader").classList.add("hidden");
+          },
+        );
+      }
+
+      ////////////////////////////
+      // SAVE HOME LOCATION
+      ////////////////////////////
+
+      function saveHomeLocation() {
+        if (!lat) return alert("Load location first");
+
+        localStorage.setItem("homeLat", lat);
+        localStorage.setItem("homeLon", lon);
+
+        alert("Home saved");
+      }
+
+      ////////////////////////////
+      // LOAD HOME ON START
+      ////////////////////////////
+
+      window.onload = () => {
+        const hlat = localStorage.getItem("homeLat");
+        const hlon = localStorage.getItem("homeLon");
+
+        if (hlat) {
+          lat = hlat;
+          lon = hlon;
+
+          loadWeather();
+        }
+      };
+
+      ////////////////////////////
+      // SEARCH CITY
+      ////////////////////////////
+
+      async function searchCity() {
+        const city = document.getElementById("search").value;
+
+        const res = await fetch(
+          `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${API}`,
+        );
+
+        const data = await res.json();
+
+        lat = data[0].lat;
+        lon = data[0].lon;
+
+        loadWeather();
+      }
+
+      ////////////////////////////
+      // LOAD WEATHER
+      ////////////////////////////
+
+      async function loadWeather() {
+        loadCurrent();
+        loadForecast();
+        loadAlerts();
+      }
+
+      ////////////////////////////
+      // CURRENT WEATHER
+      ////////////////////////////
+
+      async function loadCurrent() {
+        const res = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API}`,
+        );
+
+        const d = await res.json();
+
+        currentCard.classList.remove("hidden");
+
+        city.innerText = d.name;
+        temp.innerText = Math.round(d.main.temp);
+        desc.innerText = d.weather[0].description;
+        humidity.innerText = d.main.humidity;
+        wind.innerText = d.wind.speed;
+        pressure.innerText = d.main.pressure;
+
+        icon.innerText = icons[d.weather[0].icon] || "🌡";
+      }
+
+      ////////////////////////////
+      // FORECAST
+      ////////////////////////////
+
+      async function loadForecast() {
+        const res = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API}`,
+        );
+
+        const data = await res.json();
+
+        forecast = data.list;
+
+        showHourly();
+        showDaily();
+      }
+
+      ////////////////////////////
+      // HOURLY
+      ////////////////////////////
+
+      function showHourly() {
+        hourly.innerHTML = "";
+
+        forecast.slice(0, 8).forEach((f) => {
+          hourly.innerHTML += `
+<div>
+
+<p>${new Date(f.dt * 1000).getHours()}:00</p>
+<p>${icons[f.weather[0].icon]}</p>
+<p>${Math.round(f.main.temp)}°</p>
+
+</div>
+`;
+        });
+
+        hourlyCard.classList.remove("hidden");
+      }
+
+      ////////////////////////////
+      // DAILY
+      ////////////////////////////
+
+      function showDaily() {
+        daily.innerHTML = "";
+
+        forecast
+          .filter((f, i) => i % 8 == 0)
+          .forEach((f) => {
+            daily.innerHTML += `
+<div>
+
+<p>${new Date(f.dt * 1000).toLocaleDateString()}</p>
+<p>${icons[f.weather[0].icon]}</p>
+<p>${Math.round(f.main.temp)}°</p>
+
+</div>
+`;
+          });
+
+        dailyCard.classList.remove("hidden");
+      }
+
+      ////////////////////////////
+      // ALERTS
+      ////////////////////////////
+
+      async function loadAlerts() {
+        const res = await fetch(
+          `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${API}`,
+        );
+
+        const data = await res.json();
+
+        alertsCard.classList.remove("hidden");
+
+        if (data.alerts) {
+          alertsCard.innerHTML = "";
+
+          data.alerts.forEach((a) => {
+            alertsCard.innerHTML += `
+<div class="bg-red-500 text-white p-2 rounded">
+⚠️ ${a.event}
+</div>
+`;
+          });
+        } else {
+          alertsCard.innerHTML = "No alerts";
+        }
+      }
+    </script>
   </body>
 </html>
