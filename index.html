@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Weather Pro App</title>
+    <script src="/script.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      body {
+        background: linear-gradient(-45deg, #0f172a, #1e293b, #020617, #334155);
+        background-size: 400% 400%;
+        animation: gradient 12s ease infinite;
+      }
+
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .weather-icon {
+        font-size: 100px;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+    </style>
+  </head>
+
+  <body class="text-white min-h-screen flex flex-col">
+    <!-- HEADER -->
+    <header class="bg-black/40 backdrop-blur p-4 shadow-lg">
+      <div class="max-w-6xl mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="text-3xl">🌦️</div>
+
+          <div>
+            <h1 class="text-2xl font-bold">Weather Pro</h1>
+
+            <p class="text-sm text-gray-300">Real-time Global Weather</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="flex-1 flex items-center justify-center">
+      <div class="w-full max-w-4xl p-6">
+        <!-- Buttons -->
+        <div class="flex gap-3 mb-4">
+          <button
+            onclick="getMyLocation()"
+            class="bg-green-500 hover:bg-green-600 px-5 py-3 rounded"
+          >
+            📍 Use My Location
+          </button>
+        </div>
+
+        <!-- Search -->
+        <div class="flex gap-3 mb-6">
+          <input
+            id="cityInput"
+            type="text"
+            placeholder="Search any city..."
+            class="flex-1 p-4 rounded text-black"
+          />
+
+          <button
+            onclick="searchWeather()"
+            class="bg-blue-500 hover:bg-blue-600 px-6 py-4 rounded"
+          >
+            Search
+          </button>
+        </div>
+
+        <div id="error" class="text-red-400 text-center mb-4"></div>
+
+        <!-- Weather Card -->
+        <div
+          id="weatherCard"
+          class="hidden bg-white/10 backdrop-blur rounded-xl p-8 shadow-lg"
+        >
+          <div class="flex flex-col md:flex-row justify-between items-center">
+            <div>
+              <h2 id="city" class="text-3xl font-bold mb-2"></h2>
+
+              <div class="text-6xl font-bold"><span id="temp"></span>°C</div>
+
+              <div id="condition" class="text-xl mt-2"></div>
+            </div>
+
+            <div id="weatherIcon" class="weather-icon">☀️</div>
+          </div>
+
+          <!-- Details -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6 text-center">
+            <div>
+              <div class="text-3xl">💨</div>
+
+              <div id="wind"></div>
+
+              <p class="text-gray-300">Wind</p>
+            </div>
+
+            <div>
+              <div class="text-3xl">🧭</div>
+
+              <div id="direction"></div>
+
+              <p class="text-gray-300">Direction</p>
+            </div>
+
+            <div>
+              <div class="text-3xl">🌡️</div>
+
+              <div id="feels"></div>
+
+              <p class="text-gray-300">Feels Like</p>
+            </div>
+
+            <div>
+              <div class="text-3xl">⏱️</div>
+
+              <div id="time"></div>
+
+              <p class="text-gray-300">Local Time</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-black/40 backdrop-blur text-center p-4 text-gray-300">
+      © 2026 Weather Pro | Tailwind CSS Project
+    </footer>
+  </body>
+</html>
